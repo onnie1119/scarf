@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>進度追蹤</title>
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+
+    body.done-page {
+      background: #e6e6e6; /* ✅ 深灰完成背景 */
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #3a7afe;
+      color: #fff;
+      padding: 15px 16px;
+      font-size: 16px;
+    }
+
+    .page-indicator {
+      letter-spacing: 1.5px;
+	  margin: 0 auto;
+    }
+
+    .reset-btn {
+     	position: fixed;
+		right: 10px;
+		background: #fff;
+		color: #3a7afe;
+		border: none;
+		border-radius: 4px;
+		padding: 2px 6px;
+		font-size: 14px;
+		cursor: pointer;
+		white-space: nowrap;
+		flex-shrink: 0;
+    }
+
+    .reset-btn:hover {
+      background: #e0eaff;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: #ffffff80;
+      width: 100%;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #bcdfff;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* ✅ 固定每行 4 格 */
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .cell {
+      padding: 20px;
+      border-radius: 8px;
+	  height:30px;
+      background: #e9e9e9;
+      color: #a6a6a6;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+      position: relative;
+      text-align: center;
+    }
+
+    .cell.done {
+      background: #3a7afe;
+      color: #fff;
+    }
+
+    .cell.active::after {
+      content: "進行中";
+      position: absolute;
+      bottom: 6px;
+      right: 18px;
+      font-size: 12px;
+      color: #3a7afe;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #prevBtn,
+    #nextBtn {
+      background: #a6a6a6;
+      color: #fff;
+    }
+
+    #undoBtn {
+      background: #e53935;
+      color: #fff;
+    }
+
+    #saveBtn {
+      background: #f5b51d;
+      color: #fff;
+    }
+
+    #saveBtn.saved {
+      background: #4caf50;
+    }
+	
+	#nextBtn {
+  transition: background 0.3s ease, color 0.3s ease;position: relative;
+}
+
+#nextBtn:disabled {
+  background: #f0f0f0;
+  color: #b0b0b0;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+#nextBtn[aria-disabled="true"]::after {
+  content: attr(title); /* ✅ 顯示提示文字 */
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+#nextBtn.completed {
+  background: #3a7afe;
+  color: #fff;
+  cursor: default;
+  border: none;
+}
+#prevBtn[disabled] {
+  background: #f0f0f0;
+  color: #b0b0b0;
+  cursor: not-allowed;
+  border: 1px solid #ccc;
+}
+.cell.done {
+  background: #3a7afe;
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+#grid {
+  	display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 100%;
+    box-sizing: border-box;
+    justify-items: center;
+}
+.cell {
+  aspect-ratio: 1 / 1; /* ✅ 保持正方形 */
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(12px, 2.5vw, 18px); /* ✅ 自動縮放 */
+  white-space: nowrap; /* ✅ 不換行 */
+  overflow: hidden;
+  border-radius: 6px;
+  user-select: none;
+}
+.cell.done {
+  background: #3a7afe;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+#container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="page-indicator" id="pageLabel">1/30</div>
+    <button class="reset-btn" onclick="resetAll()">恢復預設</button>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="container">
+    <div class="grid" id="grid"></div>
+
+    <div class="controls">
+      <button id="prevBtn" onclick="prevPage()">上一頁</button>
+      <button id="nextBtn" onclick="nextPage()">下一頁</button>
+      <button id="undoBtn" onclick="undoLastStep()">復原</button>
+      <button id="saveBtn" onclick="saveProgress()">儲存</button>
+    </div>
+  </div>
+
+  <script>
+    const totalPages = 30;
+const cellsPerPage = 10;
+let currentPage = parseInt(localStorage.getItem("currentPage")) || 1;
+let progress = JSON.parse(localStorage.getItem("progress")) || {};
+let historyStack = [];
+
+function renderPage() {
+  document.getElementById("pageLabel").textContent = `${currentPage}/${totalPages}`;
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  document.body.classList.remove("done-page");
+
+  let allDone = true;
+  let firstIncompleteFound = false;
+
+  for (let i = 0; i < cellsPerPage; i++) {
+    const num = 5 + i;
+    const key = `p${currentPage}-${num}`;
+    const cell = document.createElement("div");
+    cell.className = "cell";
+
+    if (progress[key] === "done") {
+      cell.classList.add("done");
+      cell.textContent = "已完成";
+    } else {
+      cell.textContent = num;
+
+      if (!firstIncompleteFound) {
+        progress[key] = "active";
+        cell.classList.add("active");
+        firstIncompleteFound = true;
+      }
+
+      allDone = false;
+    }
+
+    cell.onclick = () => {
+      if (progress[key] === "done") return;
+      if (progress[key] !== "active") {
+        alert("請依序完成步驟，不能跳過中間的格子！");
+        return;
+      }
+
+      progress[key] = "done";
+      historyStack.push(key);
+
+      const nextKey = `p${currentPage}-${num + 1}`;
+      if (!progress[nextKey]) {
+        progress[nextKey] = "active";
+      }
+
+      localStorage.setItem("progress", JSON.stringify(progress));
+      localStorage.setItem("currentPage", currentPage);
+      localStorage.setItem("progressSaved", "false");
+
+      renderPage();
+    };
+
+    grid.appendChild(cell);
+  }
+
+  const prevBtn = document.getElementById("prevBtn");
+  prevBtn.disabled = currentPage === 1;
+
+  updateProgressBar();
+
+  const saveBtn = document.getElementById("saveBtn");
+  const saved = localStorage.getItem("progressSaved") === "true";
+  if (saved) {
+    saveBtn.classList.add("saved");
+  } else {
+    saveBtn.classList.remove("saved");
+  }
+
+  const nextBtn = document.getElementById("nextBtn");
+  nextBtn.textContent = "下一頁";
+  nextBtn.classList.remove("completed");
+  nextBtn.onclick = nextPage;
+
+  if (allDone && currentPage === totalPages) {
+    nextBtn.textContent = "已完成";
+    nextBtn.classList.add("completed");
+    nextBtn.onclick = () => {
+      alert("🎉 恭喜您完成艱難的任務！辛苦了！");
+    };
+  }
+
+  if (allDone) {
+    nextBtn.setAttribute("aria-disabled", "false");
+    nextBtn.style.background = currentPage === totalPages ? "#3a7afe" : "#a6a6a6";
+    nextBtn.style.color = "#fff";
+    nextBtn.style.cursor = "pointer";
+    nextBtn.style.border = "none";
+    nextBtn.title = "";
+    document.body.classList.add("done-page");
+  } else {
+    nextBtn.setAttribute("aria-disabled", "true");
+    nextBtn.style.background = "#f0f0f0";
+    nextBtn.style.color = "#b0b0b0";
+    nextBtn.style.cursor = "not-allowed";
+    nextBtn.style.border = "1px solid #ccc";
+    nextBtn.title = "請先完成本頁才能前往下一頁";
+    document.body.classList.remove("done-page");
+  }
+}
+
+function prevPage() {
+  if (currentPage > 1) {
+    currentPage--;
+    renderPage();
+  }
+}
+
+function nextPage() {
+  let allDone = true;
+  for (let i = 0; i < cellsPerPage; i++) {
+    const num = 5 + i;
+    const key = `p${currentPage}-${num}`;
+    if (progress[key] !== "done") {
+      allDone = false;
+      break;
+    }
+  }
+
+  if (!allDone) {
+    alert("請先完成本頁所有步驟才能前往下一頁！");
+    return;
+  }
+
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderPage();
+  }
+}
+
+function saveProgress() {
+  localStorage.setItem("progressBackup", JSON.stringify(progress));
+  localStorage.setItem("pageBackup", currentPage);
+
+  localStorage.setItem("progress", JSON.stringify(progress));
+  localStorage.setItem("currentPage", currentPage);
+  localStorage.setItem("progressSaved", "true");
+
+  const saveBtn = document.getElementById("saveBtn");
+  saveBtn.classList.add("saved");
+
+  setTimeout(() => {
+    saveBtn.classList.remove("saved");
+    localStorage.setItem("progressSaved", "false");
+  }, 10000);
+
+  alert("進度已儲存！");
+}
+
+function undoLastStep() {
+  if (historyStack.length === 0) return;
+
+  const lastKey = historyStack.pop();
+  delete progress[lastKey];
+
+  const match = lastKey.match(/p(\d+)-(\d+)/);
+  if (match) {
+    const page = parseInt(match[1]);
+    const num = parseInt(match[2]);
+    const nextKey = `p${page}-${num + 1}`;
+    if (progress[nextKey] === "active") {
+      delete progress[nextKey];
+    }
+  }
+
+  localStorage.setItem("progress", JSON.stringify(progress));
+  localStorage.setItem("currentPage", currentPage);
+  localStorage.setItem("progressSaved", "false");
+
+  renderPage();
+}
+
+function resetAll() {
+  if (confirm("確定要恢復預設？這會清除所有進度！")) {
+    localStorage.removeItem("progress");
+    localStorage.removeItem("progressSaved");
+    progress = {};
+    historyStack = [];
+    currentPage = 1;
+    renderPage();
+  }
+}
+
+function updateProgressBar() {
+  const totalCells = totalPages * cellsPerPage;
+  const doneCount = Object.values(progress).filter(v => v === "done").length;
+  const percent = Math.round((doneCount / totalCells) * 100);
+  document.getElementById("progressFill").style.width = `${percent}%`;
+}
+
+renderPage();
+
+
+	
+  </script>
+</body>
+</html>
