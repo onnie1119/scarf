@@ -213,14 +213,95 @@
   max-width: 600px;
   margin: 0 auto;
 }
+#topBar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 8px 16px;
+  background: #f5f5f5;
+}
+
+#guideBtn {
+      position: fixed;
+    left: 8px;
+    background: #3a7afe;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#guideOverlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#guideOverlay.hidden {
+  display: none;
+}
+
+#guideContainer {
+      background: #fff;
+    border-radius: 8px;
+    position: relative;
+    width: 95%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#guideImage {
+  max-width: 100%;
+  max-height: 60vh;
+  margin-bottom: 12px;
+}
+
+.guideNav button {
+  margin: 0 8px;
+  padding: 6px 12px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#closeGuide {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
 
   </style>
 </head>
 <body>
   <div class="top-bar">
+  	<button id="guideBtn">📘 說明書</button>
     <div class="page-indicator" id="pageLabel">1/30</div>
     <button class="reset-btn" onclick="resetAll()">恢復預設</button>
   </div>
+  
+  <div id="guideOverlay" class="hidden">
+  <div id="guideContainer">
+    <button id="closeGuide">✖</button>
+    <img id="guideImage" src="guide1.png" alt="說明圖示">
+    <div class="guideNav">
+      <button id="prevGuide">←</button>
+      <button id="nextGuide">→</button>
+    </div>
+  </div>
+</div>
+
   <div class="progress-bar">
     <div class="progress-fill" id="progressFill"></div>
   </div>
@@ -435,7 +516,42 @@ function updateProgressBar() {
 renderPage();
 
 
-	
+	const guideBtn = document.getElementById("guideBtn");
+const guideOverlay = document.getElementById("guideOverlay");
+const guideImage = document.getElementById("guideImage");
+const closeGuide = document.getElementById("closeGuide");
+const prevGuide = document.getElementById("prevGuide");
+const nextGuide = document.getElementById("nextGuide");
+
+const guideImages = ["./織法-01.jpg",
+  "./織法-02.jpg"];
+let currentGuideIndex = 0;
+
+guideBtn.onclick = () => {
+  guideOverlay.classList.remove("hidden");
+  guideImage.src = guideImages[currentGuideIndex];
+};
+
+closeGuide.onclick = () => {
+  guideOverlay.classList.add("hidden");
+  currentGuideIndex = 0;
+  guideImage.src = guideImages[currentGuideIndex];
+};
+
+nextGuide.onclick = () => {
+  if (currentGuideIndex < guideImages.length - 1) {
+    currentGuideIndex++;
+    guideImage.src = guideImages[currentGuideIndex];
+  }
+};
+
+prevGuide.onclick = () => {
+  if (currentGuideIndex > 0) {
+    currentGuideIndex--;
+    guideImage.src = guideImages[currentGuideIndex];
+  }
+};
+
   </script>
 </body>
 </html>
