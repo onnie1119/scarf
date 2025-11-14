@@ -594,7 +594,6 @@ function submitAuth(mode) {
   progress = savedProgress ? JSON.parse(savedProgress) : {};
   currentPage = savedPage ? parseInt(savedPage) : 1;
 
-  // ✅ 直接切換，不要動畫
   document.getElementById("authScreen").style.display = "none";
   renderPage();
 }
@@ -712,15 +711,17 @@ function nextPage() {
   }
 
   if (currentPage < totalPages) {
-    const container = document.querySelector(".container");
-    container.classList.add("page-slide-out-left");
-    setTimeout(() => {
-      currentPage++;
-      renderPage();
-      container.classList.remove("page-slide-out-left");
-      container.classList.add("page-slide-in-right");
-      setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
-    }, 600);
+    // ⭐ 更動：移除動畫，直接切換
+    currentPage++;
+    renderPage();
+  }
+}
+
+function prevPage() {
+  if (currentPage > 1) {
+    // ⭐ 更動：移除動畫，直接切換
+    currentPage--;
+    renderPage();
   }
 }
 
@@ -858,6 +859,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
