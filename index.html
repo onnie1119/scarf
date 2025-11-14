@@ -38,7 +38,7 @@
 		border: none;
 		border-radius: 4px;
 		padding: 2px 6px;
-		font-size: 20px;
+		font-size: 25px;
 		cursor: pointer;
 		white-space: nowrap;
 		flex-shrink: 0;
@@ -222,8 +222,8 @@
 
 #guideBtn {
     position: fixed;
-	font-size: 20px;
-    left: 12px;
+	font-size: 25px;
+    right: 40px;
 	background-color:#3a7afe;
     border: none;
     padding: 2px 6px;
@@ -274,22 +274,23 @@
     bottom: 10px;
 }
 #closeGuide {
-      position: absolute;
-    top: 10px;
-    right: -10px;
+   position: absolute;
+    top: 11px;
+    right: 0px;
     background: transparent;
     border: none;
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
+    color: #333;
 }
 
   </style>
 </head>
 <body>
   <div class="top-bar">
-  	<button id="guideBtn">💡</button>
+  	<button id="guideBtn">🟡</button>
     <div class="page-indicator" id="pageLabel">1/30</div>
-    <button class="reset-btn" onclick="resetAll()">🆘</button>
+    <button class="reset-btn" onclick="resetAll()">🔴</button>
   </div>
   
   <div id="guideOverlay" class="hidden">
@@ -580,6 +581,7 @@ function handleSwipe() {
 	</script>
 </body>
 </html>
+
 
 
 
