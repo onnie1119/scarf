@@ -354,10 +354,11 @@ ease;
 }
 
 .user-info {
-  position: relative;
-  font-size: 12px;
-  color: #fff;
-  cursor: pointer;
+  position: fixed;
+    left: 22px;
+    font-size: 12px;
+    color: #ffffff91;
+    cursor: pointer;
 }
 
 .user-menu {
@@ -398,9 +399,9 @@ ease;
 
 <div id="authScreen">
   <div class="auth-box">
-    <h2 id="authTitle">登入進度追蹤</h2>
-    <input type="text" id="authUsername" placeholder="使用者名稱" />
-    <input type="password" id="authPassword" placeholder="密碼" />
+    <h2 id="authTitle">スカーフ作り</h2>
+    <input type="text" id="authUsername" placeholder="使用者帳號" />
+    <input type="password" id="authPassword" placeholder="使用者密碼" />
     <button onclick="submitAuth()">登入</button>
     <p id="toggleAuth" onclick="toggleAuthMode()">還沒有帳號？點我註冊</p>
   </div>
@@ -412,9 +413,9 @@ ease;
 	<div class="user-info" id="userInfo">
 	  <span id="displayName">使用者</span>
 	  <div class="user-menu hidden" id="userMenu">
-	    <div onclick="renameDisplayName()">修改使用者名稱</div>
-	    <div onclick="logout()">登出</div>
+	    <div onclick="renameDisplayName()">修改名稱</div>
 	    <div onclick="deleteAccount()">註銷帳號</div>
+		<div onclick="logout()">登出帳號</div>
 	  </div>
 	</div>
 
@@ -756,6 +757,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
