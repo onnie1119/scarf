@@ -524,25 +524,12 @@ ease;
   </div>
 
 <script>
-const totalPages = 30;
+	const totalPages = 30;
 const cellsPerPage = 10;
 let currentUser = localStorage.getItem("currentUser");
 let currentPage = 1;
 let progress = {};
 let historyStack = [];
-
-let authMode = "login"; // "login" 或 "register"
-
-// 切換登入/註冊模式（如果你要保留按鈕切換）
-function toggleAuthMode() {
-  authMode = authMode === "login" ? "register" : "login";
-  document.getElementById("authTitle").textContent =
-    authMode === "login" ? "登入進度追蹤" : "註冊新帳號";
-  document.querySelector(".auth-box button").textContent =
-    authMode === "login" ? "登入" : "註冊";
-  document.getElementById("toggleAuthBtn").textContent =
-    authMode === "login" ? "註冊" : "返回登入";
-}
 
 // 登入/註冊流程
 function submitAuth(mode) {
@@ -579,7 +566,7 @@ function submitAuth(mode) {
       displayName = prompt("註冊成功！請輸入您的使用者名稱：");
       if (!displayName) {
         alert("必須輸入使用者名稱！註冊流程中止。");
-        return;
+        return; // ❌ 沒輸入名稱就直接結束，不進入首頁
       }
       nameExists = false;
       for (let i = 0; i < localStorage.length; i++) {
@@ -617,13 +604,11 @@ function submitAuth(mode) {
   }, 600);
 }
 
-
-
+// 渲染頁面
 function renderPage() {
- const displayName = localStorage.getItem(`displayName_${currentUser}`) || currentUser;
-document.getElementById("displayName").textContent = displayName;
-document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}`;
-
+  const displayName = localStorage.getItem(`displayName_${currentUser}`) || currentUser;
+  document.getElementById("displayName").textContent = displayName;
+  document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}`;
 
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
@@ -643,13 +628,11 @@ document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}
       cell.textContent = "已完成";
     } else {
       cell.textContent = num;
-
       if (!firstIncompleteFound) {
         progress[key] = "active";
         cell.classList.add("active");
         firstIncompleteFound = true;
       }
-
       allDone = false;
     }
 
@@ -659,37 +642,27 @@ document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}
         alert("請依序完成步驟，不能跳過中間的格子！");
         return;
       }
-
       progress[key] = "done";
       historyStack.push(key);
-
       const nextKey = `p${currentPage}-${num + 1}`;
       if (!progress[nextKey]) {
         progress[nextKey] = "active";
       }
-
       localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
       localStorage.setItem(`page_${currentUser}`, currentPage);
       localStorage.setItem("progressSaved", "false");
-
       renderPage();
     };
 
     grid.appendChild(cell);
   }
 
-  const prevBtn = document.getElementById("prevBtn");
-  prevBtn.disabled = currentPage === 1;
-
+  document.getElementById("prevBtn").disabled = currentPage === 1;
   updateProgressBar();
 
   const saveBtn = document.getElementById("saveBtn");
   const saved = localStorage.getItem("progressSaved") === "true";
-  if (saved) {
-    saveBtn.classList.add("saved");
-  } else {
-    saveBtn.classList.remove("saved");
-  }
+  saved ? saveBtn.classList.add("saved") : saveBtn.classList.remove("saved");
 
   const nextBtn = document.getElementById("nextBtn");
   nextBtn.textContent = "下一頁";
@@ -699,9 +672,7 @@ document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}
   if (allDone && currentPage === totalPages) {
     nextBtn.textContent = "已完成";
     nextBtn.classList.add("completed");
-    nextBtn.onclick = () => {
-      alert("🎉 恭喜您完成艱難的任務！辛苦了！");
-    };
+    nextBtn.onclick = () => alert("🎉 恭喜您完成艱難的任務！辛苦了！");
   }
 
   if (allDone) {
@@ -723,155 +694,6 @@ document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}
   }
 }
 
-function prevPage() {
-  if (currentPage > 1) {
-    const container = document.querySelector(".container");
-    container.classList.add("page-slide-out-right");
-    setTimeout(() => {
-      currentPage--;
-      renderPage();
-      container.classList.remove("page-slide-out-right");
-      container.classList.add("page-slide-in-left");
-      setTimeout(() => container.classList.remove("page-slide-in-left"), 600);
-    }, 600);
-  }
-}
-
-function nextPage() {
-  let allDone = true;
-  for (let i = 0; i < cellsPerPage; i++) {
-    const num = 5 + i;
-    const key = `p${currentPage}-${num}`;
-    if (progress[key] !== "done") {
-      allDone = false;
-      break;
-    }
-  }
-
-  if (!allDone) {
-    alert("請先完成本頁所有步驟才能前往下一頁！");
-    return;
-  }
-
-  if (currentPage < totalPages) {
-    const container = document.querySelector(".container");
-    container.classList.add("page-slide-out-left");
-    setTimeout(() => {
-      currentPage++;
-      renderPage();
-      container.classList.remove("page-slide-out-left");
-      container.classList.add("page-slide-in-right");
-      setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
-    }, 600);
-  }
-}
-
-
-function saveProgress() {
-  localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
-  localStorage.setItem(`page_${currentUser}`, currentPage);
-  localStorage.setItem("progressSaved", "true");
-
-  const saveBtn = document.getElementById("saveBtn");
-  saveBtn.classList.add("saved");
-
-  setTimeout(() => {
-    saveBtn.classList.remove("saved");
-    localStorage.setItem("progressSaved", "false");
-  }, 10000);
-
-  alert("進度已儲存！");
-}
-
-function undoLastStep() {
-  if (historyStack.length === 0) return;
-
-  const lastKey = historyStack.pop();
-  delete progress[lastKey];
-
-  const match = lastKey.match(/p(\d+)-(\d+)/);
-  if (match) {
-    const page = parseInt(match[1]);
-    const num = parseInt(match[2]);
-    const nextKey = `p${page}-${num + 1}`;
-    if (progress[nextKey] === "active") {
-      delete progress[nextKey];
-    }
-  }
-
-  localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
-  localStorage.setItem(`page_${currentUser}`, currentPage);
-  localStorage.setItem("progressSaved", "false");
-
-  renderPage();
-}
-
-function resetAll() {
-  if (confirm("確定要恢復預設？這會清除所有進度！")) {
-    localStorage.removeItem(`progress_${currentUser}`);
-    localStorage.removeItem(`page_${currentUser}`);
-    localStorage.removeItem("progressSaved");
-    progress = {};
-    historyStack = [];
-    currentPage = 1;
-    renderPage();
-  }
-}
-
-function updateProgressBar() {
-  const totalCells = totalPages * cellsPerPage;
-  const doneCount = Object.values(progress).filter(v => v === "done").length;
-  const percent = Math.round((doneCount / totalCells) * 100);
-  document.getElementById("progressFill").style.width = `${percent}%`;
-}
-
-
-	// 點擊使用者名稱 → 顯示選單
-document.getElementById("userInfo").onclick = () => {
-  const menu = document.getElementById("userMenu");
-  menu.classList.toggle("hidden");
-};
-
-document.addEventListener("click", (e) => {
-  const menu = document.getElementById("userMenu");
-  if (!document.getElementById("userInfo").contains(e.target)) {
-    menu.classList.add("hidden");
-  }
-});
-
-// 修改使用者名稱
-function renameDisplayName() {
-  let newName;
-  let nameExists = true;
-
-  while (nameExists) {
-    newName = prompt("請輸入新的使用者名稱：");
-    if (!newName) {
-      alert("必須輸入使用者名稱！");
-      return;
-    }
-
-    nameExists = false;
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key.startsWith("displayName_")) {
-        const existingName = localStorage.getItem(key);
-        if (existingName === newName) {
-          nameExists = true;
-          alert("此使用者名稱已被使用，請換一個！");
-          break;
-        }
-      }
-    }
-  }
-
-  // ✅ 唯一名稱才更新
-  localStorage.setItem(`displayName_${currentUser}`, newName);
-  document.getElementById("displayName").textContent = newName;
-  alert("名稱已更新！");
-}
-
-
 // 登出功能
 function logout() {
   const container = document.querySelector(".container");
@@ -880,56 +702,32 @@ function logout() {
   container.classList.add("page-slide-out-right");
   setTimeout(() => {
     localStorage.removeItem("currentUser");
+    progress = {};
+    currentPage = 1;
+    document.getElementById("grid").innerHTML = "";
     authScreen.style.display = "flex";
     authScreen.classList.add("page-slide-in-left");
     setTimeout(() => authScreen.classList.remove("page-slide-in-left"), 600);
   }, 600);
 }
 
-
-// 註銷帳號功能
-function deleteAccount() {
-  if (confirm("確定要註銷帳號？這將刪除所有資料！")) {
-    localStorage.removeItem(`password_${currentUser}`);
-    localStorage.removeItem(`progress_${currentUser}`);
-    localStorage.removeItem(`page_${currentUser}`);
-    localStorage.removeItem(`displayName_${currentUser}`);
-    localStorage.removeItem("currentUser");
-    alert("帳號已註銷！");
-    location.reload();
-  }
-}
+// ✅ 初始化：檢查是否已登入（只保留一次）
 if (!currentUser) {
   document.getElementById("authScreen").style.display = "flex";
 } else {
-  // 已登入 → 直接載入進度
   const savedProgress = localStorage.getItem(`progress_${currentUser}`);
   const savedPage = localStorage.getItem(`page_${currentUser}`);
   progress = savedProgress ? JSON.parse(savedProgress) : {};
   currentPage = savedPage ? parseInt(savedPage) : 1;
   document.getElementById("authScreen").style.display = "none";
   renderPage();
-}
-function changeGuideImage(newSrc, direction = "left") {
-  const img = document.getElementById("guideImage");
-  const outClass = direction === "left" ? "page-slide-out-left" : "page-slide-out-right";
-  const inClass = direction === "left" ? "page-slide-in-right" : "page-slide-in-left";
-
-  img.classList.add(outClass);
-  setTimeout(() => {
-    img.src = newSrc;
-    img.classList.remove(outClass);
-    img.classList.add(inClass);
-    setTimeout(() => img.classList.remove(inClass), 600);
-  }, 600);
-}
-
 </script>
 
 
 
 </body>
 </html>
+
 
 
 
