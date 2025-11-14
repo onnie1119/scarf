@@ -324,7 +324,7 @@ let progress = JSON.parse(localStorage.getItem("progress")) || {};
 let historyStack = [];
 
 function renderPage() {
-  document.getElementById("pageLabel").textContent = `${currentPage}/${totalPages}`;
+  document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}`;
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
   document.body.classList.remove("done-page");
@@ -581,6 +581,7 @@ function handleSwipe() {
 	</script>
 </body>
 </html>
+
 
 
 
