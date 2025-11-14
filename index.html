@@ -432,6 +432,39 @@ ease;
   to { opacity: 1; transform: scale(1); }
 }
 
+/* 頁面滑出 */
+.page-slide-out-left {
+  animation: slideOutLeft 0.6s forwards;
+}
+.page-slide-out-right {
+  animation: slideOutRight 0.6s forwards;
+}
+
+@keyframes slideOutLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-100%); }
+}
+@keyframes slideOutRight {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(100%); }
+}
+
+/* 頁面滑入 */
+.page-slide-in-left {
+  animation: slideInLeft 0.6s forwards;
+}
+.page-slide-in-right {
+  animation: slideInRight 0.6s forwards;
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
 
   </style>
 </head>
@@ -516,7 +549,18 @@ function toggleAuthMode() {
 function submitAuth(mode) {
   const username = document.getElementById("authUsername").value.trim().toLowerCase();
   const password = document.getElementById("authPassword").value;
+  const authScreen = document.getElementById("authScreen");
+  const container = document.querySelector(".container");
 
+  authScreen.classList.add("page-slide-out-left");
+  setTimeout(() => {
+    authScreen.style.display = "none";
+    container.classList.add("page-slide-in-right");
+    setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
+    renderPage();
+  }, 600);
+
+	
   if (!username || !password) {
     alert("請輸入帳號與密碼！");
     return;
@@ -683,8 +727,15 @@ document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}
 
 function prevPage() {
   if (currentPage > 1) {
-    currentPage--;
-    renderPage();
+    const container = document.querySelector(".container");
+    container.classList.add("page-slide-out-right");
+    setTimeout(() => {
+      currentPage--;
+      renderPage();
+      container.classList.remove("page-slide-out-right");
+      container.classList.add("page-slide-in-left");
+      setTimeout(() => container.classList.remove("page-slide-in-left"), 600);
+    }, 600);
   }
 }
 
@@ -705,10 +756,18 @@ function nextPage() {
   }
 
   if (currentPage < totalPages) {
-    currentPage++;
-    renderPage();
+    const container = document.querySelector(".container");
+    container.classList.add("page-slide-out-left");
+    setTimeout(() => {
+      currentPage++;
+      renderPage();
+      container.classList.remove("page-slide-out-left");
+      container.classList.add("page-slide-in-right");
+      setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
+    }, 600);
   }
 }
+
 
 function saveProgress() {
   localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
@@ -826,9 +885,18 @@ function renameDisplayName() {
 
 // 登出功能
 function logout() {
-  localStorage.removeItem("currentUser");
-  location.reload();
+  const container = document.querySelector(".container");
+  const authScreen = document.getElementById("authScreen");
+
+  container.classList.add("page-slide-out-right");
+  setTimeout(() => {
+    localStorage.removeItem("currentUser");
+    authScreen.style.display = "flex";
+    authScreen.classList.add("page-slide-in-left");
+    setTimeout(() => authScreen.classList.remove("page-slide-in-left"), 600);
+  }, 600);
 }
+
 
 // 註銷帳號功能
 function deleteAccount() {
@@ -853,6 +921,19 @@ if (!currentUser) {
   document.getElementById("authScreen").style.display = "none";
   renderPage();
 }
+function changeGuideImage(newSrc, direction = "left") {
+  const img = document.getElementById("guideImage");
+  const outClass = direction === "left" ? "page-slide-out-left" : "page-slide-out-right";
+  const inClass = direction === "left" ? "page-slide-in-right" : "page-slide-in-left";
+
+  img.classList.add(outClass);
+  setTimeout(() => {
+    img.src = newSrc;
+    img.classList.remove(outClass);
+    img.classList.add(inClass);
+    setTimeout(() => img.classList.remove(inClass), 600);
+  }, 600);
+}
 
 </script>
 
@@ -860,6 +941,7 @@ if (!currentUser) {
 
 </body>
 </html>
+
 
 
 
