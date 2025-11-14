@@ -320,30 +320,30 @@ ease;
 }
 
 .auth-box {
-  background: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  
   text-align: center;
 }
 
 .auth-box input {
-  padding: 8px 12px;
-  font-size: 16px;
-  margin-bottom: 12px;
-  width: 200px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+ padding: 10px 20px;
+    font-size: 14px;
+    margin-bottom: 12px;
+    border: 1px solid #e1e1e1;
+    border-radius: 50px;
+    width: 220px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .auth-box button {
-  padding: 8px 16px;
-  background: #3a7afe;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+ padding: 6px 18px;
+    background: #3a7afe;
+    color: #fff;
+    border: none;
+    margin-top: 1rem;
+    border-radius: 50px;
+    cursor: pointer;
 }
 
 #toggleAuth {
@@ -391,6 +391,22 @@ ease;
 .hidden {
   display: none;
 }
+.auth-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.auth-buttons button {
+  padding: 8px 16px;
+  background: #3a7afe;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
 
 
   </style>
@@ -402,8 +418,10 @@ ease;
     <h2 id="authTitle">スカーフ作り</h2>
     <input type="text" id="authUsername" placeholder="使用者帳號" />
     <input type="password" id="authPassword" placeholder="使用者密碼" />
-    <button onclick="submitAuth()">登入</button>
-    <p id="toggleAuth" onclick="toggleAuthMode()">還沒有帳號？點我註冊</p>
+    <div class="auth-buttons">
+	  <button onclick="submitAuth()">登入</button>
+	  <button onclick="toggleAuthMode()" id="toggleAuthBtn">註冊</button>
+	</div>
   </div>
 </div>
 
@@ -461,7 +479,7 @@ function toggleAuthMode() {
   authMode = authMode === "login" ? "register" : "login";
   document.getElementById("authTitle").textContent = authMode === "login" ? "登入進度追蹤" : "註冊新帳號";
   document.querySelector(".auth-box button").textContent = authMode === "login" ? "登入" : "註冊";
-  document.getElementById("toggleAuth").textContent = authMode === "login" ? "還沒有帳號？點我註冊" : "已有帳號？點我登入";
+  document.getElementById("toggleAuthBtn").textContent = authMode === "login" ? "註冊" : "返回登入";
 }
 
 function submitAuth() {
@@ -757,6 +775,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
