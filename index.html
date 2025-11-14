@@ -11,7 +11,11 @@
       padding: 0;
       background: #f9f9f9;
     }
-
+body.no-scroll {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
     body.done-page {
       background: #e6e6e6; /* ✅ 深灰完成背景 */
     }
@@ -577,10 +581,23 @@ function handleSwipe() {
     guideImage.src = guideImages[currentGuideIndex];
   }
 }
+guideBtn.onclick = () => {
+  guideOverlay.classList.remove("hidden");
+  guideImage.src = guideImages[currentGuideIndex];
+  document.body.classList.add("no-scroll"); // ✅ 禁止捲動
+};
+
+closeGuide.onclick = () => {
+  guideOverlay.classList.add("hidden");
+  currentGuideIndex = 0;
+  guideImage.src = guideImages[currentGuideIndex];
+  document.body.classList.remove("no-scroll"); // ✅ 恢復捲動
+};
 
 	</script>
 </body>
 </html>
+
 
 
 
