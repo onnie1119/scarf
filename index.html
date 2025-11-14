@@ -308,7 +308,7 @@ ease;
   border: 1px solid #e0eaff;
 }
 
-#loginScreen {
+#authScreen {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
@@ -319,7 +319,7 @@ ease;
   z-index: 1000;
 }
 
-.login-box {
+.auth-box {
   background: #fff;
   padding: 30px;
   border-radius: 8px;
@@ -327,7 +327,7 @@ ease;
   text-align: center;
 }
 
-.login-box input {
+.auth-box input {
   padding: 8px 12px;
   font-size: 16px;
   margin-bottom: 12px;
@@ -337,7 +337,7 @@ ease;
   margin-right: auto;
 }
 
-.login-box button {
+.auth-box button {
   padding: 8px 16px;
   background: #3a7afe;
   color: #fff;
@@ -346,20 +346,29 @@ ease;
   cursor: pointer;
 }
 
+#toggleAuth {
+  font-size: 14px;
+  color: #3a7afe;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
 
 
   </style>
 </head>
 <body class="no-scroll">
 
-<div id="loginScreen">
-  <div class="login-box">
-    <h2>登入進度追蹤</h2>
-    <input type="text" id="usernameInput" placeholder="使用者名稱" />
-    <input type="password" id="passwordInput" placeholder="密碼" />
-    <button onclick="login()">登入</button>
+<div id="authScreen">
+  <div class="auth-box">
+    <h2 id="authTitle">登入進度追蹤</h2>
+    <input type="text" id="authUsername" placeholder="使用者名稱" />
+    <input type="password" id="authPassword" placeholder="密碼" />
+    <button onclick="submitAuth()">登入</button>
+    <p id="toggleAuth" onclick="toggleAuthMode()">還沒有帳號？點我註冊</p>
   </div>
 </div>
+
 	
   <div class="top-bar">
   	<button id="guideBtn">🟡</button>
@@ -391,6 +400,7 @@ ease;
   </div>
 
  <script>
+<script>
 const totalPages = 30;
 const cellsPerPage = 10;
 let currentUser = localStorage.getItem("currentUser");
@@ -398,9 +408,18 @@ let currentPage = 1;
 let progress = {};
 let historyStack = [];
 
-function login() {
-  const username = document.getElementById("usernameInput").value.trim();
-  const password = document.getElementById("passwordInput").value;
+let authMode = "login"; // 或 "register"
+
+function toggleAuthMode() {
+  authMode = authMode === "login" ? "register" : "login";
+  document.getElementById("authTitle").textContent = authMode === "login" ? "登入進度追蹤" : "註冊新帳號";
+  document.querySelector(".auth-box button").textContent = authMode === "login" ? "登入" : "註冊";
+  document.getElementById("toggleAuth").textContent = authMode === "login" ? "還沒有帳號？點我註冊" : "已有帳號？點我登入";
+}
+
+function submitAuth() {
+  const username = document.getElementById("authUsername").value.trim();
+  const password = document.getElementById("authPassword").value;
 
   if (!username || !password) {
     alert("請輸入帳號與密碼！");
@@ -409,13 +428,24 @@ function login() {
 
   const storedPassword = localStorage.getItem(`password_${username}`);
 
-  if (storedPassword) {
+  if (authMode === "login") {
+    if (!storedPassword) {
+      alert("帳號不存在！");
+      return;
+    }
     if (storedPassword !== password) {
       alert("密碼錯誤！");
       return;
     }
   } else {
+    if (storedPassword) {
+      alert("此帳號已存在！");
+      return;
+    }
     localStorage.setItem(`password_${username}`, password);
+    alert("註冊成功，請重新登入！");
+    toggleAuthMode();
+    return;
   }
 
   currentUser = username;
@@ -426,12 +456,12 @@ function login() {
   progress = savedProgress ? JSON.parse(savedProgress) : {};
   currentPage = savedPage ? parseInt(savedPage) : 1;
 
-  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("authScreen").style.display = "none";
   renderPage();
 }
 
 function renderPage() {
-  document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}`;
+  document.getElementById("pageLabel").textContent = `👤 ${currentUser}　${currentPage}-${totalPages}`;
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
   document.body.classList.remove("done-page");
@@ -619,7 +649,7 @@ function updateProgressBar() {
 
 // ✅ 初始化：檢查是否已登入
 if (!currentUser) {
-  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("authScreen").style.display = "flex";
 } else {
   const savedProgress = localStorage.getItem(`progress_${currentUser}`);
   const savedPage = localStorage.getItem(`page_${currentUser}`);
@@ -629,8 +659,11 @@ if (!currentUser) {
 }
 </script>
 
+</script>
+
 </body>
 </html>
+
 
 
 
