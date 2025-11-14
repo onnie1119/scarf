@@ -353,6 +353,43 @@ ease;
   margin-top: 10px;
 }
 
+.user-info {
+  position: relative;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.user-menu {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 100;
+  min-width: 120px;
+}
+
+.user-menu div {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.user-menu div:last-child {
+  border-bottom: none;
+}
+
+.user-menu div:hover {
+  background: #f0f0f0;
+}
+
+.hidden {
+  display: none;
+}
 
 
   </style>
@@ -371,6 +408,16 @@ ease;
 
 	
   <div class="top-bar">
+	  
+	<div class="user-info" id="userInfo">
+	  <span id="displayName">使用者</span>
+	  <div class="user-menu hidden" id="userMenu">
+	    <div onclick="renameDisplayName()">修改使用者名稱</div>
+	    <div onclick="logout()">登出</div>
+	    <div onclick="deleteAccount()">註銷帳號</div>
+	  </div>
+	</div>
+
   	<button id="guideBtn">🟡</button>
     <div class="page-indicator" id="pageLabel">1-30</div>
     <button class="reset-btn" onclick="resetAll()">🔴</button>
@@ -400,14 +447,14 @@ ease;
   </div>
 
  <script>
+<script>
 const totalPages = 30;
 const cellsPerPage = 10;
 let currentUser = localStorage.getItem("currentUser");
 let currentPage = 1;
 let progress = {};
 let historyStack = [];
-
-let authMode = "login"; // 或 "register"
+let authMode = "login";
 
 function toggleAuthMode() {
   authMode = authMode === "login" ? "register" : "login";
@@ -437,15 +484,14 @@ function submitAuth() {
       alert("此帳號已存在！");
       return;
     }
-   localStorage.setItem(`password_${username}`, password);
-const displayName = prompt("註冊成功！請輸入您的顯示名稱：");
-if (displayName) {
-  localStorage.setItem(`displayName_${username}`, displayName);
-}
-alert("註冊完成，請重新登入！");
-toggleAuthMode();
-return;
-
+    localStorage.setItem(`password_${username}`, password);
+    const displayName = prompt("註冊成功！請輸入您的使用者名稱：");
+    if (displayName) {
+      localStorage.setItem(`displayName_${username}`, displayName);
+    }
+    alert("註冊完成，請重新登入！");
+    toggleAuthMode();
+    return;
   }
 
   currentUser = username;
@@ -461,8 +507,9 @@ return;
 }
 
 function renderPage() {
- const displayName = localStorage.getItem(`displayName_${currentUser}`) || currentUser;
-document.getElementById("pageLabel").textContent = `👤 ${displayName}　${currentPage}-${totalPages}`;
+  const displayName = localStorage.getItem(`displayName_${currentUser}`) || currentUser;
+  document.getElementById("displayName").textContent = displayName;
+  document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}`;
 
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
@@ -517,18 +564,12 @@ document.getElementById("pageLabel").textContent = `👤 ${displayName}　${curr
     grid.appendChild(cell);
   }
 
-  const prevBtn = document.getElementById("prevBtn");
-  prevBtn.disabled = currentPage === 1;
-
+  document.getElementById("prevBtn").disabled = currentPage === 1;
   updateProgressBar();
 
   const saveBtn = document.getElementById("saveBtn");
   const saved = localStorage.getItem("progressSaved") === "true";
-  if (saved) {
-    saveBtn.classList.add("saved");
-  } else {
-    saveBtn.classList.remove("saved");
-  }
+  saveBtn.classList.toggle("saved", saved);
 
   const nextBtn = document.getElementById("nextBtn");
   nextBtn.textContent = "下一頁";
@@ -649,21 +690,24 @@ function updateProgressBar() {
   document.getElementById("progressFill").style.width = `${percent}%`;
 }
 
-// ✅ 初始化：檢查是否已登入
-if (!currentUser) {
-  document.getElementById("authScreen").style.display = "flex";
-} else {
-  const savedProgress = localStorage.getItem(`progress_${currentUser}`);
-  const savedPage = localStorage.getItem(`page_${currentUser}`);
-  progress = savedProgress ? JSON.parse(savedProgress) : {};
-  currentPage = savedPage ? parseInt(savedPage) : 1;
-  renderPage();
-}
+// ✅ 使用者選單功能
+document.getElementById("userInfo").onclick = () => {
+  document.getElementById("userMenu").classList.toggle("hidden");
+};
+
+document.addEventListener("click", (e) => {
+  if (!document.getElementById("userInfo").contains(e.target)) {
+    document.getElementById("userMenu").classList.add("hidden");
+  }
+});
+
+function renameDisplay
 </script>
 
 
 </body>
 </html>
+
 
 
 
