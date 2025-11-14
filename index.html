@@ -807,6 +807,7 @@ if (!currentUser) {
   currentPage = savedPage ? parseInt(savedPage) : 1;
   renderPage();
 }
+
 	// 點擊使用者名稱 → 顯示選單
 document.getElementById("userInfo").onclick = () => {
   const menu = document.getElementById("userMenu");
@@ -831,12 +832,14 @@ function renameDisplayName() {
 }
 
 function logout() {
+  // ⭐ 不要 reload，只顯示登入畫面
   localStorage.removeItem("currentUser");
   progress = {};
   currentPage = 1;
   document.getElementById("grid").innerHTML = "";
   document.getElementById("authScreen").style.display = "flex";
 }
+
 
 
 // 註銷帳號功能
@@ -859,6 +862,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
