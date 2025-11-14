@@ -493,22 +493,7 @@ function toggleAuthMode() {
 }
 
 // 登入/註冊流程
-function submitAuth() {
-  const username = ...
-  ...
-  if (authMode === "login") {
-    ...
-  } else {
-    // 註冊流程
-  }
-}
-也就是說：submitAuth() 沒有接收參數，卻在 HTML 裡傳了 'register'。 結果 authMode 永遠是 "login"，所以你按「註冊」時，程式還是跑登入邏輯 → 當然就顯示「無此帳號紀錄」。
 
-✅ 修正方式
-方法一：讓 submitAuth() 接收參數
-改成：
-
-js
 function submitAuth(mode) {
   const username = document.getElementById("authUsername").value.trim().toLowerCase();
   const password = document.getElementById("authPassword").value;
@@ -833,6 +818,7 @@ if (!currentUser) {
 
 </body>
 </html>
+
 
 
 
