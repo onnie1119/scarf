@@ -590,13 +590,19 @@ function submitAuth(mode) {
 
   const authScreen = document.getElementById("authScreen");
   const container = document.querySelector(".container");
-  authScreen.classList.add("page-slide-out-left");
+	
+ authScreen.classList.add("page-slide-out-left");
+setTimeout(() => {
+  authScreen.style.display = "none";
+  container.classList.add("page-slide-in-right");
+
+  // ✅ 等動畫結束後再 renderPage
   setTimeout(() => {
-    authScreen.style.display = "none";
-    container.classList.add("page-slide-in-right");
-    setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
+    container.classList.remove("page-slide-in-right");
     renderPage();
   }, 600);
+}, 600);
+
 }
 
 function renderPage() {
@@ -854,6 +860,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
