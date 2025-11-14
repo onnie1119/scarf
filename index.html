@@ -332,6 +332,9 @@ ease;
   font-size: 16px;
   margin-bottom: 12px;
   width: 200px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .login-box button {
@@ -344,14 +347,16 @@ ease;
 }
 
 
+
   </style>
 </head>
 <body class="no-scroll">
 
 <div id="loginScreen">
   <div class="login-box">
-    <h2>請輸入使用者名稱</h2>
-    <input type="text" id="usernameInput" placeholder="例如：ichen" />
+    <h2>登入進度追蹤</h2>
+    <input type="text" id="usernameInput" placeholder="使用者名稱" />
+    <input type="password" id="passwordInput" placeholder="密碼" />
     <button onclick="login()">登入</button>
   </div>
 </div>
@@ -385,7 +390,7 @@ ease;
     </div>
   </div>
 
-  <script>
+ <script>
 const totalPages = 30;
 const cellsPerPage = 10;
 let currentUser = localStorage.getItem("currentUser");
@@ -394,14 +399,26 @@ let progress = {};
 let historyStack = [];
 
 function login() {
-  const input = document.getElementById("usernameInput");
-  const name = input.value.trim();
-  if (!name) {
-    alert("請輸入使用者名稱！");
+  const username = document.getElementById("usernameInput").value.trim();
+  const password = document.getElementById("passwordInput").value;
+
+  if (!username || !password) {
+    alert("請輸入帳號與密碼！");
     return;
   }
 
-  currentUser = name;
+  const storedPassword = localStorage.getItem(`password_${username}`);
+
+  if (storedPassword) {
+    if (storedPassword !== password) {
+      alert("密碼錯誤！");
+      return;
+    }
+  } else {
+    localStorage.setItem(`password_${username}`, password);
+  }
+
+  currentUser = username;
   localStorage.setItem("currentUser", currentUser);
 
   const savedProgress = localStorage.getItem(`progress_${currentUser}`);
@@ -614,6 +631,7 @@ if (!currentUser) {
 
 </body>
 </html>
+
 
 
 
