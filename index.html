@@ -499,10 +499,15 @@ function submitAuth() {
   const storedPassword = localStorage.getItem(`password_${username}`);
 
   if (authMode === "login") {
-    if (!storedPassword || storedPassword !== password) {
-      alert("你輸入的帳號或密碼錯誤");
-      return;
-    }
+  if (!storedPassword) {
+    alert("無此帳號紀錄");
+    return;
+  }
+  if (storedPassword !== password) {
+    alert("您輸入的密碼錯誤");
+    return;
+  }
+
   } else {
     if (storedPassword) {
       alert("此帳號已存在！");
@@ -780,6 +785,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
