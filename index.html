@@ -437,10 +437,15 @@ function submitAuth() {
       alert("此帳號已存在！");
       return;
     }
-    localStorage.setItem(`password_${username}`, password);
-    alert("註冊成功，請重新登入！");
-    toggleAuthMode();
-    return;
+   localStorage.setItem(`password_${username}`, password);
+const displayName = prompt("註冊成功！請輸入您的顯示名稱：");
+if (displayName) {
+  localStorage.setItem(`displayName_${username}`, displayName);
+}
+alert("註冊完成，請重新登入！");
+toggleAuthMode();
+return;
+
   }
 
   currentUser = username;
@@ -456,7 +461,9 @@ function submitAuth() {
 }
 
 function renderPage() {
-  document.getElementById("pageLabel").textContent = `👤 ${currentUser}　${currentPage}-${totalPages}`;
+ const displayName = localStorage.getItem(`displayName_${currentUser}`) || currentUser;
+document.getElementById("pageLabel").textContent = `👤 ${displayName}　${currentPage}-${totalPages}`;
+
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
   document.body.classList.remove("done-page");
@@ -657,6 +664,7 @@ if (!currentUser) {
 
 </body>
 </html>
+
 
 
 
