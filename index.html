@@ -386,11 +386,32 @@ ease;
   </div>
 
   <script>
-    const totalPages = 30;
+const totalPages = 30;
 const cellsPerPage = 10;
-let currentPage = parseInt(localStorage.getItem("currentPage")) || 1;
-let progress = JSON.parse(localStorage.getItem("progress")) || {};
+let currentUser = localStorage.getItem("currentUser");
+let currentPage = 1;
+let progress = {};
 let historyStack = [];
+
+function login() {
+  const input = document.getElementById("usernameInput");
+  const name = input.value.trim();
+  if (!name) {
+    alert("請輸入使用者名稱！");
+    return;
+  }
+
+  currentUser = name;
+  localStorage.setItem("currentUser", currentUser);
+
+  const savedProgress = localStorage.getItem(`progress_${currentUser}`);
+  const savedPage = localStorage.getItem(`page_${currentUser}`);
+  progress = savedProgress ? JSON.parse(savedProgress) : {};
+  currentPage = savedPage ? parseInt(savedPage) : 1;
+
+  document.getElementById("loginScreen").style.display = "none";
+  renderPage();
+}
 
 function renderPage() {
   document.getElementById("pageLabel").textContent = `${currentPage}-${totalPages}`;
@@ -437,17 +458,12 @@ function renderPage() {
         progress[nextKey] = "active";
       }
 
-      localStorage.setItem("progress", JSON.stringify(progress));
-      localStorage.setItem("currentPage", currentPage);
+      localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
+      localStorage.setItem(`page_${currentUser}`, currentPage);
       localStorage.setItem("progressSaved", "false");
-		
-if (!currentUser) {
-  document.getElementById("loginScreen").style.display = "flex";
-} else {
-  renderPage();
-}
 
-    ;
+      renderPage();
+    };
 
     grid.appendChild(cell);
   }
@@ -527,11 +543,8 @@ function nextPage() {
 }
 
 function saveProgress() {
-  localStorage.setItem("progressBackup", JSON.stringify(progress));
-  localStorage.setItem("pageBackup", currentPage);
-
-  localStorage.setItem("progress", JSON.stringify(progress));
-  localStorage.setItem("currentPage", currentPage);
+  localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
+  localStorage.setItem(`page_${currentUser}`, currentPage);
   localStorage.setItem("progressSaved", "true");
 
   const saveBtn = document.getElementById("saveBtn");
@@ -561,8 +574,8 @@ function undoLastStep() {
     }
   }
 
-  localStorage.setItem("progress", JSON.stringify(progress));
-  localStorage.setItem("currentPage", currentPage);
+  localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
+  localStorage.setItem(`page_${currentUser}`, currentPage);
   localStorage.setItem("progressSaved", "false");
 
   renderPage();
@@ -570,7 +583,8 @@ function undoLastStep() {
 
 function resetAll() {
   if (confirm("確定要恢復預設？這會清除所有進度！")) {
-    localStorage.removeItem("progress");
+    localStorage.removeItem(`progress_${currentUser}`);
+    localStorage.removeItem(`page_${currentUser}`);
     localStorage.removeItem("progressSaved");
     progress = {};
     historyStack = [];
@@ -586,129 +600,21 @@ function updateProgressBar() {
   document.getElementById("progressFill").style.width = `${percent}%`;
 }
 
-renderPage();
-
-
-	const guideBtn = document.getElementById("guideBtn");
-const guideOverlay = document.getElementById("guideOverlay");
-const guideImage = document.getElementById("guideImage");
-const closeGuide = document.getElementById("closeGuide");
-const prevGuide = document.getElementById("prevGuide");
-const nextGuide = document.getElementById("nextGuide");
-
-const guideImages = ["images/織法-01.jpg",
-  "images/織法-02.jpg"];
-let currentGuideIndex = 0;
-
-guideBtn.onclick = () => {
-  guideOverlay.classList.remove("hidden");
-  guideImage.src = guideImages[currentGuideIndex];
-};
-
-closeGuide.onclick = () => {
-  guideOverlay.classList.add("hidden");
-  currentGuideIndex = 0;
-  guideImage.src = guideImages[currentGuideIndex];
-};
-
-nextGuide.onclick = () => {
-  if (currentGuideIndex < guideImages.length - 1) {
-    currentGuideIndex++;
-    guideImage.src = guideImages[currentGuideIndex];
-  }
-};
-
-prevGuide.onclick = () => {
-  if (currentGuideIndex > 0) {
-    currentGuideIndex--;
-    guideImage.src = guideImages[currentGuideIndex];
-  }
-};
-
-  </script>
-	<script>
-		let touchStartX = 0;
-let touchEndX = 0;
-
-guideImage.addEventListener("touchstart", (e) => {
-  touchStartX = e.changedTouches[0].screenX;
-});
-
-guideImage.addEventListener("touchend", (e) => {
-  touchEndX = e.changedTouches[0].screenX;
-  handleSwipe();
-});
-
-function handleSwipe() {
-  const swipeThreshold = 50; // 最小滑動距離
-  const deltaX = touchEndX - touchStartX;
-
-  if (deltaX > swipeThreshold && currentGuideIndex > 0) {
-    currentGuideIndex--;
-    guideImage.src = guideImages[currentGuideIndex];
-  } else if (deltaX < -swipeThreshold && currentGuideIndex < guideImages.length - 1) {
-    currentGuideIndex++;
-    guideImage.src = guideImages[currentGuideIndex];
-  }
-}
-guideBtn.onclick = () => {
-  guideOverlay.classList.remove("hidden");
-  guideImage.src = guideImages[currentGuideIndex];
-  document.body.classList.add("no-scroll"); // ✅ 禁止捲動
-};
-
-closeGuide.onclick = () => {
-  guideOverlay.classList.add("hidden");
-  currentGuideIndex = 0;
-  guideImage.src = guideImages[currentGuideIndex];
-  document.body.classList.remove("no-scroll"); // ✅ 恢復捲動
-};
-
-	</script>
-<script>
-let currentUser = localStorage.getItem("currentUser");
-
-function login() {
-  const input = document.getElementById("usernameInput");
-  const name = input.value.trim();
-  if (!name) {
-    alert("請輸入使用者名稱！");
-    return;
-  }
-
-  currentUser = name;
-  localStorage.setItem("currentUser", currentUser);
-
-  // 載入該使用者的進度
+// ✅ 初始化：檢查是否已登入
+if (!currentUser) {
+  document.getElementById("loginScreen").style.display = "flex";
+} else {
   const savedProgress = localStorage.getItem(`progress_${currentUser}`);
   const savedPage = localStorage.getItem(`page_${currentUser}`);
   progress = savedProgress ? JSON.parse(savedProgress) : {};
   currentPage = savedPage ? parseInt(savedPage) : 1;
-
-  document.getElementById("loginScreen").style.display = "none";
   renderPage();
 }
-
-// 儲存時記得用使用者名稱作為 key
-function saveProgress() {
-  localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
-  localStorage.setItem(`page_${currentUser}`, currentPage);
-  localStorage.setItem("progressSaved", "true");
-
-  const saveBtn = document.getElementById("saveBtn");
-  saveBtn.classList.add("saved");
-
-  setTimeout(() => {
-    saveBtn.classList.remove("saved");
-    localStorage.setItem("progressSaved", "false");
-  }, 10000);
-
-  alert("進度已儲存！");
-}
-
 </script>
+
 </body>
 </html>
+
 
 
 
