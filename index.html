@@ -69,6 +69,8 @@ body.no-scroll {
       padding: 20px;
       max-width: 600px;
       margin: 0 auto;
+		overflow: visible;
+z-index: auto;
     }
 
     .grid {
@@ -76,6 +78,8 @@ body.no-scroll {
       grid-template-columns: repeat(4, 1fr); /* ✅ 固定每行 4 格 */
       gap: 12px;
       margin-bottom: 30px;
+		overflow: visible;
+z-index: auto;
     }
 
     .cell {
@@ -359,6 +363,7 @@ ease;
     font-size: 12px;
     color: #ffffff91;
     cursor: pointer;
+	 z-index: 9999; /* 確保在最上層 */
 }
 
 .user-menu {
@@ -775,6 +780,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
