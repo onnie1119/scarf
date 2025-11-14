@@ -527,14 +527,13 @@ ease;
     </div>
   </div>
 <script>
+<script>
 const totalPages = 30;
 const cellsPerPage = 10;
 let currentUser = localStorage.getItem("currentUser");
 let currentPage = 1;
 let progress = {};
 let historyStack = [];
-
-
 
 function submitAuth(mode) {
   const username = document.getElementById("authUsername").value.trim().toLowerCase();
@@ -598,7 +597,6 @@ function submitAuth(mode) {
   document.getElementById("authScreen").style.display = "none";
   renderPage();
 }
-
 
 function renderPage() {
   const displayName = localStorage.getItem(`displayName_${currentUser}`) || currentUser;
@@ -705,36 +703,20 @@ function nextPage() {
       break;
     }
   }
-
   if (!allDone) {
     alert("請先完成本頁所有步驟才能前往下一頁！");
     return;
   }
-
   if (currentPage < totalPages) {
-    const container = document.querySelector(".container");
-    container.classList.add("page-slide-out-left");
-    setTimeout(() => {
-      currentPage++;
-      renderPage();
-      container.classList.remove("page-slide-out-left");
-      container.classList.add("page-slide-in-right");
-      setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
-    }, 600);
+    currentPage++;
+    renderPage();
   }
 }
 
 function prevPage() {
   if (currentPage > 1) {
-    const container = document.querySelector(".container");
-    container.classList.add("page-slide-out-right");
-    setTimeout(() => {
-      currentPage--;
-      renderPage();
-      container.classList.remove("page-slide-out-right");
-      container.classList.add("page-slide-in-left");
-      setTimeout(() => container.classList.remove("page-slide-in-left"), 600);
-    }, 600);
+    currentPage--;
+    renderPage();
   }
 }
 
@@ -756,11 +738,9 @@ function saveProgress() {
 
 function undoLastStep() {
   if (historyStack.length === 0) return;
-
   const lastKey = historyStack.pop();
   delete progress[lastKey];
-
-const match = lastKey.match(/p(\d+)-(\d+)/);
+  const match = lastKey.match(/p(\d+)-(\d+)/);
   if (match) {
     const page = parseInt(match[1]);
     const num = parseInt(match[2]);
@@ -769,11 +749,9 @@ const match = lastKey.match(/p(\d+)-(\d+)/);
       delete progress[nextKey];
     }
   }
-
   localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
   localStorage.setItem(`page_${currentUser}`, currentPage);
   localStorage.setItem("progressSaved", "false");
-
   renderPage();
 }
 
@@ -787,15 +765,6 @@ function resetAll() {
     currentPage = 1;
     renderPage();
   }
-}
-
-function updateProgressBar() {
-  const totalCells = totalPages * cellsPerPage;
-  const doneCount = Object.values(progress).filter(v => v === "done").length;
-  const percent = Math.round((doneCount / totalCells) * 100);
-  document.getElementById("progressFill").style.width = `${percent}%`;
-}
-
 // ✅ 初始化：檢查是否已登入
 if (!currentUser) {
   document.getElementById("authScreen").style.display = "flex";
@@ -858,6 +827,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
