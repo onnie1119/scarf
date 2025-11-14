@@ -499,31 +499,32 @@ function submitAuth() {
   const storedPassword = localStorage.getItem(`password_${username}`);
 
   if (authMode === "login") {
-  if (!storedPassword) {
-    alert("無此帳號紀錄");
-    return;
-  }
-  if (storedPassword !== password) {
-    alert("您輸入的密碼錯誤");
-    return;
-  }
-
+    if (!storedPassword) {
+      alert("無此帳號紀錄");
+      return;
+    }
+    if (storedPassword !== password) {
+      alert("您輸入的密碼錯誤");
+      return;
+    }
   } else {
     if (storedPassword) {
       alert("此帳號已存在！");
       return;
     }
-   localStorage.setItem(`password_${username}`, password);
-const displayName = prompt("註冊成功！請輸入您的顯示名稱：");
-if (displayName) {
-  localStorage.setItem(`displayName_${username}`, displayName);
-}
-alert("註冊完成，請重新登入！");
-toggleAuthMode();
-return;
+    // ✅ 儲存新帳號密碼
+    localStorage.setItem(`password_${username}`, password);
 
+    // ✅ 立即要求輸入使用者名稱
+    const displayName = prompt("註冊成功！請輸入您的使用者名稱：");
+    if (displayName) {
+      localStorage.setItem(`displayName_${username}`, displayName);
+    }
+
+    alert("註冊完成，已自動登入！");
   }
 
+  // ✅ 登入流程（共用）
   currentUser = username;
   localStorage.setItem("currentUser", currentUser);
 
@@ -785,6 +786,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
