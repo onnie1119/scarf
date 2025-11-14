@@ -298,10 +298,7 @@
   <div id="guideContainer">
     <button id="closeGuide">❎</button>
     <img id="guideImage" src="guide1.png" alt="說明圖示">
-    <div class="guideNav">
-      <button id="prevGuide">⬅️</button>
-      <button id="nextGuide">➡️</button>
-    </div>
+    
   </div>
 </div>
 
@@ -556,8 +553,36 @@ prevGuide.onclick = () => {
 };
 
   </script>
+	<script>
+		let touchStartX = 0;
+let touchEndX = 0;
+
+guideImage.addEventListener("touchstart", (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+guideImage.addEventListener("touchend", (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const swipeThreshold = 50; // 最小滑動距離
+  const deltaX = touchEndX - touchStartX;
+
+  if (deltaX > swipeThreshold && currentGuideIndex > 0) {
+    currentGuideIndex--;
+    guideImage.src = guideImages[currentGuideIndex];
+  } else if (deltaX < -swipeThreshold && currentGuideIndex < guideImages.length - 1) {
+    currentGuideIndex++;
+    guideImage.src = guideImages[currentGuideIndex];
+  }
+}
+
+	</script>
 </body>
 </html>
+
 
 
 
