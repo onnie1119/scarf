@@ -308,10 +308,54 @@ ease;
   border: 1px solid #e0eaff;
 }
 
+#loginScreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.login-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.login-box input {
+  padding: 8px 12px;
+  font-size: 16px;
+  margin-bottom: 12px;
+  width: 200px;
+}
+
+.login-box button {
+  padding: 8px 16px;
+  background: #3a7afe;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 
   </style>
 </head>
 <body class="no-scroll">
+
+<div id="loginScreen">
+  <div class="login-box">
+    <h2>請輸入使用者名稱</h2>
+    <input type="text" id="usernameInput" placeholder="例如：ichen" />
+    <button onclick="login()">登入</button>
+  </div>
+</div>
+	
   <div class="top-bar">
   	<button id="guideBtn">🟡</button>
     <div class="page-indicator" id="pageLabel">1-30</div>
@@ -396,9 +440,14 @@ function renderPage() {
       localStorage.setItem("progress", JSON.stringify(progress));
       localStorage.setItem("currentPage", currentPage);
       localStorage.setItem("progressSaved", "false");
+		
+if (!currentUser) {
+  document.getElementById("loginScreen").style.display = "flex";
+} else {
+  renderPage();
+}
 
-      renderPage();
-    };
+    ;
 
     grid.appendChild(cell);
   }
@@ -616,8 +665,51 @@ closeGuide.onclick = () => {
 };
 
 	</script>
+<script>
+let currentUser = localStorage.getItem("currentUser");
+
+function login() {
+  const input = document.getElementById("usernameInput");
+  const name = input.value.trim();
+  if (!name) {
+    alert("請輸入使用者名稱！");
+    return;
+  }
+
+  currentUser = name;
+  localStorage.setItem("currentUser", currentUser);
+
+  // 載入該使用者的進度
+  const savedProgress = localStorage.getItem(`progress_${currentUser}`);
+  const savedPage = localStorage.getItem(`page_${currentUser}`);
+  progress = savedProgress ? JSON.parse(savedProgress) : {};
+  currentPage = savedPage ? parseInt(savedPage) : 1;
+
+  document.getElementById("loginScreen").style.display = "none";
+  renderPage();
+}
+
+// 儲存時記得用使用者名稱作為 key
+function saveProgress() {
+  localStorage.setItem(`progress_${currentUser}`, JSON.stringify(progress));
+  localStorage.setItem(`page_${currentUser}`, currentPage);
+  localStorage.setItem("progressSaved", "true");
+
+  const saveBtn = document.getElementById("saveBtn");
+  saveBtn.classList.add("saved");
+
+  setTimeout(() => {
+    saveBtn.classList.remove("saved");
+    localStorage.setItem("progressSaved", "false");
+  }, 10000);
+
+  alert("進度已儲存！");
+}
+
+</script>
 </body>
 </html>
+
 
 
 
