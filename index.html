@@ -400,7 +400,6 @@ ease;
   </div>
 
  <script>
-<script>
 const totalPages = 30;
 const cellsPerPage = 10;
 let currentUser = localStorage.getItem("currentUser");
@@ -428,13 +427,11 @@ function submitAuth() {
 
   const storedPassword = localStorage.getItem(`password_${username}`);
 
- if (authMode === "login") {
-  if (!storedPassword || storedPassword !== password) {
-    alert("你輸入的帳號或密碼錯誤");
-    return;
-  }
-}
-
+  if (authMode === "login") {
+    if (!storedPassword || storedPassword !== password) {
+      alert("你輸入的帳號或密碼錯誤");
+      return;
+    }
   } else {
     if (storedPassword) {
       alert("此帳號已存在！");
@@ -657,10 +654,10 @@ if (!currentUser) {
 }
 </script>
 
-</script>
 
 </body>
 </html>
+
 
 
 
