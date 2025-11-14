@@ -793,13 +793,36 @@ document.addEventListener("click", (e) => {
 
 // 修改使用者名稱
 function renameDisplayName() {
-  const newName = prompt("請輸入新的使用者名稱：");
-  if (newName) {
-    localStorage.setItem(`displayName_${currentUser}`, newName);
-    document.getElementById("displayName").textContent = newName;
-    alert("名稱已更新！");
+  let newName;
+  let nameExists = true;
+
+  while (nameExists) {
+    newName = prompt("請輸入新的使用者名稱：");
+    if (!newName) {
+      alert("必須輸入使用者名稱！");
+      return;
+    }
+
+    nameExists = false;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith("displayName_")) {
+        const existingName = localStorage.getItem(key);
+        if (existingName === newName) {
+          nameExists = true;
+          alert("此使用者名稱已被使用，請換一個！");
+          break;
+        }
+      }
+    }
   }
+
+  // ✅ 唯一名稱才更新
+  localStorage.setItem(`displayName_${currentUser}`, newName);
+  document.getElementById("displayName").textContent = newName;
+  alert("名稱已更新！");
 }
+
 
 // 登出功能
 function logout() {
@@ -837,6 +860,7 @@ if (!currentUser) {
 
 </body>
 </html>
+
 
 
 
