@@ -288,11 +288,10 @@ body.no-scroll {
     color: #333;
 }
 @keyframes pulse {
-  0% { box-shadow: 0 0 0px #3a7afe; }
-  50% { box-shadow: 0 0 12px #3a7afe; }
-  100% { box-shadow: 0 0 0px #3a7afe; }
+  0% { box-shadow: 0 0 0px rgba(58, 122, 254, 0.2); }
+  50% { box-shadow: 0 0 12px rgba(58, 122, 254, 0.3); }
+  100% { box-shadow: 0 0 0px rgba(58, 122, 254, 0.2); }
 }
-
 .cell.active {
   animation: pulse 1.5s infinite;
 	background: linear-gradient(135deg, #e0eaff, #ffffff);
@@ -609,6 +608,7 @@ closeGuide.onclick = () => {
 	</script>
 </body>
 </html>
+
 
 
 
