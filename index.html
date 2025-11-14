@@ -868,43 +868,46 @@ function deleteAccount() {
   }
 }
 // 說明引導圖切換
-let guideIndex = 1;
-const guideImages = ["images/織法-01.jpg", "images/織法-02.jpg"]; // 可自行增加
+let guideIndex = 0;
+const guideImages = ["images/織法-01.jpg", "images/織法-02.jpg"];
 
 document.getElementById("guideBtn").addEventListener("click", () => {
   document.getElementById("guideOverlay").classList.remove("hidden");
-  document.getElementById("guideImage").src = guideImages[guideIndex - 1];
+  document.getElementById("guideImage").src = guideImages[guideIndex];
 });
 
 document.getElementById("closeGuide").addEventListener("click", () => {
   document.getElementById("guideOverlay").classList.add("hidden");
 });
-// --- 手勢滑動切換 --- //
-let startX = 0;
-let endX = 0;
 
-guideImage.addEventListener("touchstart", (e) => {
+// 🔥 手勢滑動切換圖片
+let startX = 0;
+
+document.getElementById("guideOverlay").addEventListener("touchstart", (e) => {
   startX = e.touches[0].clientX;
 });
 
-guideImage.addEventListener("touchend", (e) => {
-  endX = e.changedTouches[0].clientX;
-  const distance = endX - startX;
+document.getElementById("guideOverlay").addEventListener("touchend", (e) => {
+  let endX = e.changedTouches[0].clientX;
+  let diff = endX - startX;
 
-  // 往右滑 → 前一張
-  if (distance > 50) {
-    guideIndex = Math.max(0, guideIndex - 1);
-    guideImage.src = guideImages[guideIndex];
+  // 滑動距離超過 50px 才算切換
+  if (diff > 50) {
+    // 👉 往右滑：上一張
+    guideIndex = (guideIndex - 1 + guideImages.length) % guideImages.length;
+  } else if (diff < -50) {
+    // 👉 往左滑：下一張
+    guideIndex = (guideIndex + 1) % guideImages.length;
+  } else {
+    return; // 滑太短不做事
   }
 
-  // 往左滑 → 下一張
-  if (distance < -50) {
-    guideIndex = Math.min(guideImages.length - 1, guideIndex + 1);
-    guideImage.src = guideImages[guideIndex];
-  }
+  // 更新圖片
+  document.getElementById("guideImage").src = guideImages[guideIndex];
+});
+
 
 </script>
-
 
 
 </body>
