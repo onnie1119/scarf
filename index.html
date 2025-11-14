@@ -842,6 +842,11 @@ function logout() {
   currentPage = 1;
   document.getElementById("grid").innerHTML = "";
   document.getElementById("authScreen").style.display = "flex";
+	// 👈 新增：取出並預填上一次登入的帳號
+  const lastUsername = localStorage.getItem("lastUsername");
+  if (lastUsername) {
+    document.getElementById("authUsername").value = lastUsername;
+  }
 }
 
 
@@ -865,6 +870,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
