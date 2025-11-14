@@ -555,7 +555,7 @@ function submitAuth(mode) {
         if (key.startsWith("displayName_")) {
           if (localStorage.getItem(key) === displayName) {
             nameExists = true;
-            alert("此使用者名稱已被使用！");
+            alert("此使用者名稱已被使用，請換一個！");
             break;
           }
         }
@@ -574,7 +574,7 @@ function submitAuth(mode) {
   currentPage = savedPage ? parseInt(savedPage) : 1;
   document.getElementById("authScreen").style.display = "none";
   renderPage();
-	
+}
 
 
 function renderPage() {
@@ -837,6 +837,7 @@ if (!currentUser) {
 
 </body>
 </html>
+
 
 
 
