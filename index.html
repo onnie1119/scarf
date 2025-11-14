@@ -798,8 +798,14 @@ function updateProgressBar() {
 
 // ✅ 初始化：檢查是否已登入
 if (!currentUser) {
+  // 未登入：顯示登入畫面並鎖定滾動
   document.getElementById("authScreen").style.display = "flex";
+  document.body.classList.add("no-scroll");
 } else {
+  // 已登入：隱藏登入畫面並允許滾動
+  document.getElementById("authScreen").style.display = "none";
+  document.body.classList.remove("no-scroll"); // 👈 確保重載後移除
+  
   const savedProgress = localStorage.getItem(`progress_${currentUser}`);
   const savedPage = localStorage.getItem(`page_${currentUser}`);
   progress = savedProgress ? JSON.parse(savedProgress) : {};
@@ -858,6 +864,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
