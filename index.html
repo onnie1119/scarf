@@ -524,7 +524,7 @@ ease;
   </div>
 
 <script>
-	const totalPages = 30;
+const totalPages = 30;
 const cellsPerPage = 10;
 let currentUser = localStorage.getItem("currentUser");
 let currentPage = 1;
@@ -566,7 +566,7 @@ function submitAuth(mode) {
       displayName = prompt("註冊成功！請輸入您的使用者名稱：");
       if (!displayName) {
         alert("必須輸入使用者名稱！註冊流程中止。");
-        return; // ❌ 沒輸入名稱就直接結束，不進入首頁
+        return;
       }
       nameExists = false;
       for (let i = 0; i < localStorage.length; i++) {
@@ -694,6 +694,14 @@ function renderPage() {
   }
 }
 
+// 進度條更新
+function updateProgressBar() {
+  const totalCells = totalPages * cellsPerPage;
+  const doneCount = Object.values(progress).filter(v => v === "done").length;
+  const percent = Math.round((doneCount / totalCells) * 100);
+  document.getElementById("progressFill").style.width = `${percent}%`;
+}
+
 // 登出功能
 function logout() {
   const container = document.querySelector(".container");
@@ -720,13 +728,16 @@ if (!currentUser) {
   progress = savedProgress ? JSON.parse(savedProgress) : {};
   currentPage = savedPage ? parseInt(savedPage) : 1;
   document.getElementById("authScreen").style.display = "none";
-  renderPage();}
+  renderPage();
+}
+
 </script>
 
 
 
 </body>
 </html>
+
 
 
 
