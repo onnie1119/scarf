@@ -544,7 +544,12 @@ function submitAuth(mode) {
     alert("請輸入帳號與密碼！");
     return;
   }
-
+// ✅ 驗證信箱格式
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailRegex.test(username)) {
+  alert("帳號必須是有效的信箱郵件格式！");
+  return;
+}
   const storedPassword = localStorage.getItem(`password_${username}`);
 
   if (mode === "login") {
@@ -870,6 +875,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
