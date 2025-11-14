@@ -867,7 +867,18 @@ function deleteAccount() {
     location.reload();
   }
 }
+// 說明引導圖切換
+let guideIndex = 1;
+const guideImages = ["guide1.png", "guide2.png", "guide3.png"]; // 可自行增加
 
+document.getElementById("guideBtn").addEventListener("click", () => {
+  document.getElementById("guideOverlay").classList.remove("hidden");
+  document.getElementById("guideImage").src = guideImages[guideIndex - 1];
+});
+
+document.getElementById("closeGuide").addEventListener("click", () => {
+  document.getElementById("guideOverlay").classList.add("hidden");
+});
 
 </script>
 
