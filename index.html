@@ -424,9 +424,10 @@ ease;
     <input type="text" id="authUsername" placeholder="使用者帳號" />
     <input type="password" id="authPassword" placeholder="使用者密碼" />
     <div class="auth-buttons">
-	  <button onclick="submitAuth()">登入</button>
-	  <button onclick="toggleAuthMode()" id="toggleAuthBtn" style="background-color:#959595;">註冊</button>
+	  <button onclick="submitAuth('login')">登入</button>
+	  <button onclick="submitAuth('register')">註冊</button>
 	</div>
+
   </div>
 </div>
 
@@ -487,7 +488,7 @@ function toggleAuthMode() {
   document.getElementById("toggleAuthBtn").textContent = authMode === "login" ? "註冊" : "返回登入";
 }
 
-function submitAuth() {
+function submitAuth(mode) {
   const username = document.getElementById("authUsername").value.trim();
   const password = document.getElementById("authPassword").value;
 
@@ -498,7 +499,7 @@ function submitAuth() {
 
   const storedPassword = localStorage.getItem(`password_${username}`);
 
-  if (authMode === "login") {
+  if (mode === "login") {
     if (!storedPassword) {
       alert("無此帳號紀錄");
       return;
@@ -507,32 +508,26 @@ function submitAuth() {
       alert("您輸入的密碼錯誤");
       return;
     }
-  } else {
+  } else if (mode === "register") {
     if (storedPassword) {
       alert("此帳號已存在！");
       return;
     }
-    // ✅ 儲存新帳號密碼
     localStorage.setItem(`password_${username}`, password);
-
-    // ✅ 立即要求輸入使用者名稱
     const displayName = prompt("註冊成功！請輸入您的使用者名稱：");
     if (displayName) {
       localStorage.setItem(`displayName_${username}`, displayName);
     }
-
     alert("註冊完成，已自動登入！");
   }
 
-  // ✅ 登入流程（共用）
+  // 共用登入流程
   currentUser = username;
   localStorage.setItem("currentUser", currentUser);
-
   const savedProgress = localStorage.getItem(`progress_${currentUser}`);
   const savedPage = localStorage.getItem(`page_${currentUser}`);
   progress = savedProgress ? JSON.parse(savedProgress) : {};
   currentPage = savedPage ? parseInt(savedPage) : 1;
-
   document.getElementById("authScreen").style.display = "none";
   renderPage();
 }
@@ -787,6 +782,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
