@@ -412,6 +412,25 @@ ease;
     cursor: pointer;
     font-size: 14px;
 }
+/* 淡出動畫 */
+.fade-out {
+  animation: fadeOut 0.6s forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+/* 淡入動畫 */
+.fade-in {
+  animation: fadeIn 0.6s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(1.05); }
+  to { opacity: 1; transform: scale(1); }
+}
 
 
   </style>
@@ -536,7 +555,7 @@ function submitAuth(mode) {
         if (key.startsWith("displayName_")) {
           if (localStorage.getItem(key) === displayName) {
             nameExists = true;
-            alert("此使用者名稱已被使用，請換一個！");
+            alert("此使用者名稱已被使用！");
             break;
           }
         }
@@ -555,6 +574,16 @@ function submitAuth(mode) {
   currentPage = savedPage ? parseInt(savedPage) : 1;
   document.getElementById("authScreen").style.display = "none";
   renderPage();
+	// ✅ 過渡動畫：先淡出 authScreen
+  const authScreen = document.getElementById("authScreen");
+  authScreen.classList.add("fade-out");
+
+  // 等動畫跑完再隱藏並顯示主畫面
+  setTimeout(() => {
+    authScreen.style.display = "none";
+    document.body.classList.add("fade-in"); // 主畫面淡入
+    renderPage();
+  }, 600); // 與 CSS 動畫時間一致
 }
 
 
@@ -818,6 +847,7 @@ if (!currentUser) {
 
 </body>
 </html>
+
 
 
 
