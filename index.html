@@ -574,17 +574,7 @@ function submitAuth(mode) {
   currentPage = savedPage ? parseInt(savedPage) : 1;
   document.getElementById("authScreen").style.display = "none";
   renderPage();
-	// ✅ 過渡動畫：先淡出 authScreen
-  const authScreen = document.getElementById("authScreen");
-  authScreen.classList.add("fade-out");
-
-  // 等動畫跑完再隱藏並顯示主畫面
-  setTimeout(() => {
-    authScreen.style.display = "none";
-    document.body.classList.add("fade-in"); // 主畫面淡入
-    renderPage();
-  }, 600); // 與 CSS 動畫時間一致
-}
+	
 
 
 function renderPage() {
@@ -847,6 +837,7 @@ if (!currentUser) {
 
 </body>
 </html>
+
 
 
 
