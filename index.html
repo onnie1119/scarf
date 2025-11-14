@@ -775,6 +775,17 @@ function deleteAccount() {
     location.reload();
   }
 }
+if (!currentUser) {
+  document.getElementById("authScreen").style.display = "flex";
+} else {
+  // 已登入 → 直接載入進度
+  const savedProgress = localStorage.getItem(`progress_${currentUser}`);
+  const savedPage = localStorage.getItem(`page_${currentUser}`);
+  progress = savedProgress ? JSON.parse(savedProgress) : {};
+  currentPage = savedPage ? parseInt(savedPage) : 1;
+  document.getElementById("authScreen").style.display = "none";
+  renderPage();
+}
 
 </script>
 
@@ -782,6 +793,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
