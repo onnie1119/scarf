@@ -827,16 +827,7 @@ function updateProgressBar() {
   document.getElementById("progressFill").style.width = `${percent}%`;
 }
 
-// ✅ 初始化：檢查是否已登入
-if (!currentUser) {
-  document.getElementById("authScreen").style.display = "flex";
-} else {
-  const savedProgress = localStorage.getItem(`progress_${currentUser}`);
-  const savedPage = localStorage.getItem(`page_${currentUser}`);
-  progress = savedProgress ? JSON.parse(savedProgress) : {};
-  currentPage = savedPage ? parseInt(savedPage) : 1;
-  renderPage();
-}
+
 	// 點擊使用者名稱 → 顯示選單
 document.getElementById("userInfo").onclick = () => {
   const menu = document.getElementById("userMenu");
@@ -941,6 +932,7 @@ function changeGuideImage(newSrc, direction = "left") {
 
 </body>
 </html>
+
 
 
 
