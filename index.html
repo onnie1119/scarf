@@ -595,14 +595,19 @@ authScreen.classList.add("page-slide-out-left");
 setTimeout(() => {
   authScreen.style.display = "none";
 
-  // ✅ 先 renderPage，讓內容準備好
+  // ✅ 先渲染內容
   renderPage();
 
-  // ✅ 再加動畫，畫面已經有內容了
+  // ✅ 再讓 container 顯示並加動畫
   const container = document.querySelector(".container");
-  container.classList.add("page-slide-in-right");
-  setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
+  container.style.opacity = "0"; // 先隱藏
+  requestAnimationFrame(() => {
+    container.style.opacity = "1";
+    container.classList.add("page-slide-in-right");
+    setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
+  });
 }, 600);
+
 
 
 }
@@ -862,6 +867,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
