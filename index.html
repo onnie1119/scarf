@@ -589,6 +589,7 @@ function submitAuth(mode) {
 
   currentUser = username;
   localStorage.setItem("currentUser", currentUser);
+  localStorage.setItem("lastUsername", username); // 👈 新增：記住上一次成功的帳號
   const savedProgress = localStorage.getItem(`progress_${currentUser}`);
   const savedPage = localStorage.getItem(`page_${currentUser}`);
   progress = savedProgress ? JSON.parse(savedProgress) : {};
@@ -864,6 +865,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
