@@ -534,6 +534,8 @@ let currentPage = 1;
 let progress = {};
 let historyStack = [];
 
+
+
 function submitAuth(mode) {
   const username = document.getElementById("authUsername").value.trim().toLowerCase();
   const password = document.getElementById("authPassword").value;
@@ -592,29 +594,11 @@ function submitAuth(mode) {
   progress = savedProgress ? JSON.parse(savedProgress) : {};
   currentPage = savedPage ? parseInt(savedPage) : 1;
 
-  const authScreen = document.getElementById("authScreen");
-  const container = document.querySelector(".container");
-	
-authScreen.classList.add("page-slide-out-left");
-setTimeout(() => {
-  authScreen.style.display = "none";
-
-  // ✅ 先渲染內容
+  // ✅ 直接切換，不要動畫
+  document.getElementById("authScreen").style.display = "none";
   renderPage();
-
-  // ✅ 再讓 container 顯示並加動畫
-  const container = document.querySelector(".container");
-  container.style.opacity = "0"; // 先隱藏
-  requestAnimationFrame(() => {
-    container.style.opacity = "1";
-    container.classList.add("page-slide-in-right");
-    setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
-  });
-}, 600);
-
-
-
 }
+
 
 function renderPage() {
   const displayName = localStorage.getItem(`displayName_${currentUser}`) || currentUser;
@@ -845,11 +829,14 @@ function renameDisplayName() {
   }
 }
 
-// 登出功能
 function logout() {
   localStorage.removeItem("currentUser");
-  location.reload();
+  progress = {};
+  currentPage = 1;
+  document.getElementById("grid").innerHTML = "";
+  document.getElementById("authScreen").style.display = "flex";
 }
+
 
 // 註銷帳號功能
 function deleteAccount() {
@@ -871,6 +858,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
