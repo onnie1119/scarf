@@ -591,17 +591,19 @@ function submitAuth(mode) {
   const authScreen = document.getElementById("authScreen");
   const container = document.querySelector(".container");
 	
- authScreen.classList.add("page-slide-out-left");
+authScreen.classList.add("page-slide-out-left");
 setTimeout(() => {
   authScreen.style.display = "none";
-  container.classList.add("page-slide-in-right");
 
-  // ✅ 等動畫結束後再 renderPage
-  setTimeout(() => {
-    container.classList.remove("page-slide-in-right");
-    renderPage();
-  }, 600);
+  // ✅ 先 renderPage，讓內容準備好
+  renderPage();
+
+  // ✅ 再加動畫，畫面已經有內容了
+  const container = document.querySelector(".container");
+  container.classList.add("page-slide-in-right");
+  setTimeout(() => container.classList.remove("page-slide-in-right"), 600);
 }, 600);
+
 
 }
 
@@ -860,6 +862,7 @@ function deleteAccount() {
 
 </body>
 </html>
+
 
 
 
