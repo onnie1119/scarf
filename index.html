@@ -508,51 +508,44 @@ function submitAuth(mode) {
       alert("您輸入的密碼錯誤");
       return;
     }
-  } else if (mode === "register") {
-    if (storedPassword) {
-      alert("此帳號已存在！");
-      return;
-    }
-    localStorage.setItem(`password_${username}`, password);
-    const displayName = prompt("註冊成功！請輸入您的使用者名稱：");
-    if (displayName) {
-      localStorage.setItem(`displayName_${username}`, displayName);
-    }
-	  } else {
+   else {
   if (storedPassword) {
     alert("此帳號已存在！");
     return;
   }
-  // 儲存新帳號密碼
+  // 先存帳號密碼
   localStorage.setItem(`password_${username}`, password);
 
-  // 立即要求輸入使用者名稱
-  const displayName = prompt("註冊成功！請輸入您的使用者名稱：");
-  if (displayName) {
-    // ✅ 檢查使用者名稱是否已被其他帳號使用
-    let nameExists = false;
+  let displayName;
+  let nameExists = true;
+
+  // 迴圈直到輸入唯一名稱
+  while (nameExists) {
+    displayName = prompt("註冊成功！請輸入您的使用者名稱：");
+    if (!displayName) {
+      alert("必須輸入使用者名稱！");
+      return;
+    }
+
+    nameExists = false;
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       if (key.startsWith("displayName_")) {
         const existingName = localStorage.getItem(key);
         if (existingName === displayName) {
           nameExists = true;
+          alert("此使用者名稱已被使用，請換一個！");
           break;
         }
       }
     }
-
-    if (nameExists) {
-      alert("此使用者名稱已被使用，請換一個！");
-      return; // 不允許重複名稱
-    }
-
-    localStorage.setItem(`displayName_${username}`, displayName);
   }
+
+  // 儲存唯一的使用者名稱
+  localStorage.setItem(`displayName_${username}`, displayName);
 
   alert("註冊完成，已自動登入！");
 }
-
 
 
   // 共用登入流程
@@ -827,6 +820,7 @@ if (!currentUser) {
 
 </body>
 </html>
+
 
 
 
